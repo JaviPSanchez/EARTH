@@ -1,9 +1,11 @@
 // import './tailwind.css';
 import * as THREE from '../13 - THREE-PLANET-EARTH/node_modules/three/build/three.module.js';
+import Stats from '../13 - THREE-PLANET-EARTH/node_modules/three/examples/jsm/libs/stats.module.js';
 //CDN
 //https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js
 //NPM
 import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
+// import { OrbitControls } from './node_modules/three/examples/js/controls/OrbitControls.js';
 
 import gsap from './node_modules/gsap/all.js';
 
@@ -87,7 +89,7 @@ renderer.setPixelRatio(window.devicePixelRatio); //Mejora la resolucion
 
 new OrbitControls(camera, renderer.domElement);
 
-//GEOMETRY + MESH
+////////////////////EARTH////////////////////////////////
 const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(5, 50, 50),
   new THREE.ShaderMaterial({
@@ -95,17 +97,40 @@ const sphere = new THREE.Mesh(
     fragmentShader: fragmentShader,
     uniforms: {
       globeTexture: {
-        value: new THREE.TextureLoader().load('./img/globe.jpg'),
+        value: new THREE.TextureLoader().load('./img/earthmap1k.jpg'),
       },
     },
+  }),
+  new THREE.TextureLoader().load('img/earthbump1k.jpg'),
+  new THREE.MeshPhongMaterial({
+    bumpMap: new THREE.TextureLoader().load('./img/earthspec1k.jpg'),
+    bumpScale: 0.9,
   })
-
-  //   new THREE.MeshBasicMaterial({
-  //     // color: 0xff0000,
-  //     map: new THREE.TextureLoader().load("./img/globe.jpg"),
-  //   })
 );
-sphere.position.set(0, 0, 0);
+
+//////////////////////RELIEVE TIERRA/////////////////////
+
+// const sphereMesh = new THREE.Mesh(
+//   new THREE.SphereGeometry(5, 50, 50),
+//   new THREE.TextureLoader().load('img/earthbump1k.jpg'),
+//   new THREE.MeshPhongMaterial({
+//     bumpMap: new THREE.TextureLoader().load('./img/earthspec1k.jpg'),
+//     bumpScale: 0.5,
+//   })
+// );
+// scene.add(sphereMesh);
+
+///////////////////// CLOUDS/////////////////
+const cloudMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(5.2, 50, 50),
+  new THREE.MeshPhongMaterial({
+    emissive: 0xffffff,
+    transparent: true,
+    opacity: 0.9,
+    map: new THREE.TextureLoader().load('./img/earthCloud.png'),
+  })
+);
+scene.add(cloudMesh);
 
 //ATMOSPHERE
 
@@ -150,31 +175,11 @@ starGeometry.setAttribute(
   new THREE.Float32BufferAttribute(starVertices, 3)
 );
 
-//Lo mismo que una THREE.Mesh
 const stars = new THREE.Points(starGeometry, starMaterial);
 scene.add(stars);
 
 /////////PLACING POINTS WITH LATITUDE AND LONGITUDE///////
 
-// function createPoints(lat, lng) {
-//   const points = new THREE.SphereGeometry(0.1, 50, 50);
-
-//   const shaderPoints = new THREE.MeshBasicMaterial({
-//     color: '#ff0000',
-//   });
-
-//   const pointsMesh = new THREE.Mesh(points, shaderPoints);
-
-//   const radius = 5;
-//   const latitude = (lat / 180) * Math.PI;
-//   const longitude = (lng / 180) * Math.PI;
-//   const x = radius * Math.cos(latitude) * Math.sin(longitude);
-//   const y = radius * Math.sin(latitude);
-//   const z = radius * Math.cos(latitude) * Math.cos(longitude);
-
-//   pointsMesh.position.set(x, y, z);
-//   group.add(pointsMesh);
-// }
 function createPoints(lat, lng) {
   const points = new THREE.BoxGeometry(0.1, 0.1, 1);
 
@@ -215,23 +220,22 @@ sphere.rotation.y = -Math.PI / 2;
 //////////MOUSE CONTROL///////////
 
 const mouse = {
-  x: undefined,
-  y: undefined,
+  x: 0,
+  y: 0,
 };
 //ANIMATION
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
-  // sphere.rotation.y += 0.002;
-  // group.rotation.y = mouse.x * 0.5;
-  if (mouse.x) {
-    //Para cargar desde el principio nuestro planeta, si mouse.x existe, ejecutar el codigo.
-    gsap.to(group.rotation, {
-      x: -mouse.y * 0.3,
-      y: mouse.x * 0.3,
-      duration: 2,
-    });
-  }
+  sphere.rotation.y += 0.001;
+  cloudMesh.rotation.y += 0.002;
+  group.rotation.y = mouse.x * 0.5;
+
+  gsap.to(group.rotation, {
+    x: -mouse.y * 0.3,
+    y: mouse.x * 0.3,
+    duration: 2,
+  });
 }
 animate();
 
