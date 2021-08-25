@@ -1,2 +1,2 @@
 # EARTH
-Planet earth using THREEjs
+https://javipsanchez.github.io/EARTH/
