@@ -90,6 +90,7 @@ renderer.setPixelRatio(window.devicePixelRatio); //Mejora la resolucion
 new OrbitControls(camera, renderer.domElement);
 
 ////////////////////EARTH////////////////////////////////
+
 const sphere = new THREE.Mesh(
   new THREE.SphereGeometry(5, 50, 50),
   new THREE.ShaderMaterial({
@@ -100,27 +101,54 @@ const sphere = new THREE.Mesh(
         value: new THREE.TextureLoader().load('./img/earthmap1k.jpg'),
       },
     },
-  }),
-  new THREE.TextureLoader().load('img/earthbump1k.jpg'),
-  new THREE.MeshPhongMaterial({
-    bumpMap: new THREE.TextureLoader().load('./img/earthspec1k.jpg'),
-    bumpScale: 0.9,
   })
 );
 
+////////////////////LIGHT////////////////////////////////
+
+const light = new THREE.AmbientLight(0x222222);
+scene.add(light);
+
+const dLight = new THREE.DirectionalLight(0xffffff, 1);
+dLight.position.set(5, 5, 5);
+dLight.castShadow = true;
+scene.add(dLight);
+
 //////////////////////RELIEVE TIERRA/////////////////////
 
-// const sphereMesh = new THREE.Mesh(
-//   new THREE.SphereGeometry(5, 50, 50),
-//   new THREE.TextureLoader().load('img/earthbump1k.jpg'),
-//   new THREE.MeshPhongMaterial({
-//     bumpMap: new THREE.TextureLoader().load('./img/earthspec1k.jpg'),
-//     bumpScale: 0.5,
-//   })
-// );
-// scene.add(sphereMesh);
+const geometry = new THREE.SphereGeometry(5, 50, 50);
+
+// const customShader = new THREE.ShaderMaterial({
+//   vertexShader: vertexShader, //Al tener mismo nombre en la PROPERTIE y su VARIABLE podemos dejarlo como vertexShader JS lo permite de momento lo dejamos como --> vertexShader: vertexShader,
+//   fragmentShader: fragmentShader,
+//   uniforms: {
+//     globeTexture: {
+//       value: new THREE.TextureLoader().load('./img/earthmap1k.jpg'),
+//     },
+//   },
+// });
+const texture = new THREE.TextureLoader().load('img/earthmap1k.jpg');
+const bumpmap = new THREE.TextureLoader().load('img/earthbump1k.jpg');
+const specmap = new THREE.TextureLoader().load('img/earthspec1k.jpg');
+const material = new THREE.MeshPhongMaterial({
+  map: texture,
+  bumpMap: bumpmap,
+  bumpScale: 0.4,
+  // specularMap: specmap,
+  // specular: 0x808080,
+});
+const sphereMesh = new THREE.Mesh(geometry, material);
+scene.add(sphereMesh);
+
+//////CREATING GROUP//////////
+
+const group = new THREE.Group();
+// group.add(sphere);
+group.add(sphereMesh);
+scene.add(group);
 
 ///////////////////// CLOUDS/////////////////
+
 const cloudMesh = new THREE.Mesh(
   new THREE.SphereGeometry(5.2, 50, 50),
   new THREE.MeshPhongMaterial({
@@ -132,7 +160,7 @@ const cloudMesh = new THREE.Mesh(
 );
 scene.add(cloudMesh);
 
-//ATMOSPHERE
+////////////ATMOSPHERE/////////////
 
 const atmosphere = new THREE.Mesh(
   new THREE.SphereGeometry(5, 50, 50),
@@ -148,12 +176,6 @@ atmosphere.scale.set(1.1, 1.1, 1.1);
 atmosphere.position.set(0, 0, 0);
 
 scene.add(atmosphere);
-
-//////CREATING GROUP//////////
-
-const group = new THREE.Group();
-group.add(sphere);
-scene.add(group);
 
 //////////STARS///////
 
@@ -215,7 +237,7 @@ createPoints(20.5937, 78.9629); //India
 createPoints(35.8617, 104.1954); //China
 createPoints(37.0902, -95.7129); //USA
 
-sphere.rotation.y = -Math.PI / 2;
+sphereMesh.rotation.y = -Math.PI / 2;
 
 //////////MOUSE CONTROL///////////
 
@@ -227,7 +249,8 @@ const mouse = {
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
-  sphere.rotation.y += 0.001;
+
+  // sphereMesh.rotation.y += 0.001;
   cloudMesh.rotation.y += 0.002;
   group.rotation.y = mouse.x * 0.5;
 
