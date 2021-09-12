@@ -1,13 +1,12 @@
-// import './tailwind.css';
-import * as THREE from '../13 - THREE-PLANET-EARTH/node_modules/three/build/three.module.js';
-import Stats from '../13 - THREE-PLANET-EARTH/node_modules/three/examples/jsm/libs/stats.module.js';
 //CDN
 //https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js
 //NPM
-import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/examples/jsm/controls/OrbitControls.js';
-// import { OrbitControls } from './node_modules/three/examples/js/controls/OrbitControls.js';
-
+//import * as THREE from './node_modules/three/build/three.module.js';
+//import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import gsap from './node_modules/gsap/all.js';
+//CORE
+import * as THREE from './vendor/three/build/three.module.js';
+import { OrbitControls } from './vendor/three/examples/jsm/controls/OrbitControls.js';
 
 /////////////Sphere custom shaders/////////
 
